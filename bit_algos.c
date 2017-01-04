@@ -188,6 +188,23 @@ int turn_off_first_non_zero_bit(int num)
     return(num & (num-1));
 }
 
+int get_num_bits_set(int num)
+{
+    int bits=0;
+
+    while (num)
+    {
+	num=turn_off_first_non_zero_bit(num);
+	bits++;
+    }
+    return bits;
+}
+
+int is_2_pow(int num)
+{
+    return(turn_off_first_non_zero_bit(num)? 1: 0);
+}
+
 // Shiting signed integers - results in undefined behavior in C
 
 
