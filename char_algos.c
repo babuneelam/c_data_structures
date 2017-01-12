@@ -3,6 +3,7 @@
 #include <string.h>
 
 #define NO_MORE -1
+#define MAX_STR_LEN 25
 
 int my_is_num(char);
 int my_is_alpha(char);
@@ -39,8 +40,8 @@ char help_str[] = "Allowed Operations: \n"
 int main()
 {
     int op, num;
-    char c, src[25], dst[25];
-    char str[12]; // should be able to hold -2^31(-2147483648) to 
+    char c, src[MAX_STR_LEN], dst[MAX_STR_LEN];
+    char str[MAX_STR_LEN]; // 25 len should be able to hold -2^31(-2147483648) to 
 		  // +2^32(2147483647). So, using 12 bits one bit for \0
 
 /*
@@ -100,7 +101,22 @@ int main()
 		    printf("	not lowercase\r\n");
                 break;
             case 7: /* atoi */
-                scanf("%s", src);
+// why not scanf %s? because fgets offers protection against buffer overflows
+// http://stackoverflow.com/questions/26955466/difference-between-gets-vs-scanf-vs-fgets-in-c-programming
+// The C library function char *fgets(char *str, int n, FILE *stream) reads a line from the specified stream and stores it into the string pointed to by str. It stops when either (n-1) characters are read, the newline character is read, or the end-of-file is reached, whichever comes first.
+// If a newline is read, it is stoed into the buffer. A terminating null byte \0 is stored after the last character in the buffer
+		getchar();
+                memset(src,'\n',MAX_STR_LEN);
+                fgets(src, MAX_STR_LEN, stdin); 
+                if(src[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                src[strlen(src)-1] = '\0'; // remove '\n' at the end
+
+                //scanf("%s", src);
                 printf("	atoi= %d\r\n",my_atoi(src));
                 break;
             case 8: /* itoa */
@@ -108,28 +124,94 @@ int main()
                 printf("	itoa= %s\r\n",my_itoa(num, 10, str));
                 break;
             case 9: /* strcpy */
-                scanf("%s", src);
+                //scanf("%s", src);
+		getchar();
+                memset(src,'\n',MAX_STR_LEN);
+                fgets(src, MAX_STR_LEN, stdin); 
+                if(src[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                src[strlen(src)-1] = '\0'; // remove '\n' at the end
+
 		my_strcpy(src, dst);
 		printf ("	copied str = %s\r\n", dst);
                 break;
             case 10: /* strcmp */
-                scanf("%s%s", src, dst);
+                //scanf("%s%s", src, dst);
+		getchar();
+                memset(src,'\n',MAX_STR_LEN);
+                fgets(src, MAX_STR_LEN, stdin); 
+                if(src[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+  		    c= getchar();
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                src[strlen(src)-1] = '\0'; // remove '\n' at the end
+
+                memset(dst,'\n',MAX_STR_LEN);
+                fgets(dst, MAX_STR_LEN, stdin); 
+                if(dst[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                dst[strlen(dst)-1] = '\0'; // remove '\n' at the end
+
 		printf("	strcmp ret %d \r\n", my_strcmp(src, dst));
                 break;
             case 11: /* reverse */
-                scanf("%s", src);
+                //scanf("%s", src);
+		getchar();
+                memset(src,'\n',MAX_STR_LEN);
+                fgets(src, MAX_STR_LEN, stdin); 
+                if(src[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                src[strlen(src)-1] = '\0'; // remove '\n' at the end
+
 		str_reverse(src);
 		printf ("	reversed str = %s\r\n", src);
                 break;
             case 12: /* check palindrome*/
-                scanf("%s", src);
+                //scanf("%s", src);
+		getchar();
+                memset(src,'\n',MAX_STR_LEN);
+                fgets(src, MAX_STR_LEN, stdin); 
+                if(src[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                src[strlen(src)-1] = '\0'; // remove '\n' at the end
+
                 if(is_palindrome(src))
 		    printf("	palindrome\r\n");
                 else
 		    printf("	not palindome\r\n");
                 break;
             case 13: /* sort*/
-                scanf("%s", src);
+                //scanf("%s", src);
+		getchar();
+                memset(src,'\n',MAX_STR_LEN);
+                fgets(src, MAX_STR_LEN, stdin); 
+                if(src[MAX_STR_LEN-1] != '\n')
+                {
+                    printf("Input string is more than allowed limit \r\n");
+                    while ( getchar() != '\n' ); // flush any additional chars from stdin
+                    break;
+                }
+                src[strlen(src)-1] = '\0'; // remove '\n' at the end
+
 		quick_sort(src, 0, strlen(src)-1);
 		printf ("	sorted str = %s\r\n", src);
                 break;
