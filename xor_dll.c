@@ -21,6 +21,7 @@ xor_dll_node_t *xor_dll_search(xor_dll_node_t *, int );
 xor_dll_node_t *xor_dll_reverse_iter(xor_dll_node_t *);
 xor_dll_node_t *xor_dll_reverse_recur(xor_dll_node_t *);
 void xor_dll_display(xor_dll_node_t *);
+void xor_dll_display_reverse(xor_dll_node_t *);
 void xor_dll_free(xor_dll_node_t *);
 
 char help_str[] = "Allowed Operations: \n"
@@ -31,8 +32,9 @@ char help_str[] = "Allowed Operations: \n"
     "	 4 <ele> - Delete ele\r\n"
     "	 5 <ele> - search ele\r\n"
     "	 6 - display list\r\n"
-    "	 7 - reverse list iteratively\r\n"
-    "	 8 - reverse list recursively\r\n"
+    "	 7 - display list in reverse\r\n"
+    "	 8 - reverse list iteratively\r\n"
+    "	 9 - reverse list recursively\r\n"
     ;
 
 int main()
@@ -72,10 +74,13 @@ int main()
             case 6: /* display entire linked list */
                 xor_dll_display(xor_dll_head);
                 break;
-            case 7: /* reverse a list itereatively */
+            case 7: /* display entire linked list in reverse */
+                xor_dll_display_reverse(xor_dll_head);
+                break;
+            case 8: /* reverse a list itereatively */
                 xor_dll_head = xor_dll_reverse_iter(xor_dll_head);
                 break;
-            case 8: /* reverse a list recursively*/
+            case 9: /* reverse a list recursively*/
                 xor_dll_head = xor_dll_reverse_recur(xor_dll_head);
                 break;
             default: /*error */
@@ -132,7 +137,7 @@ xor_dll_node_t *xor_dll_append(xor_dll_node_t *head, int val)
     cur=head;
     while (XOR(cur->next, prev))
     {
-	//cur = cur->nxt;
+	//Implement prev= cur, cur = cur->nxt;
         tmp = prev;
 	prev = cur;
         cur = XOR(cur->next, tmp);
@@ -166,7 +171,7 @@ xor_dll_node_t *xor_dll_delete(xor_dll_node_t *head, int val)
 	    free(cur);
 	    return head;
 	}
-	//Implement cur=cur->next;
+	//Implement prev= cur, cur = cur->nxt;
 	tmp =prev;
 	prev=cur;
 	cur=XOR(cur->next, tmp);
@@ -188,7 +193,7 @@ xor_dll_node_t *xor_dll_search(xor_dll_node_t *head, int val)
     {
 	if (cur->val == val)
 	    return cur;
-	//Implement cur=cur->next;
+	//Implement prev= cur, cur = cur->nxt;
 	tmp =prev;
 	prev=cur;
 	cur=XOR(cur->next, tmp);
@@ -209,7 +214,7 @@ void xor_dll_display(xor_dll_node_t *head)
     while (cur)
     {
 	printf("%d ", cur->val);
-	//Implement cur=cur->next;
+	//Implement prev= cur, cur = cur->nxt;
 	tmp =prev;
 	prev=cur;
 	cur=XOR(cur->next, tmp);
@@ -217,6 +222,36 @@ void xor_dll_display(xor_dll_node_t *head)
     printf("\n");
 }
 
+void xor_dll_display_reverse(xor_dll_node_t *head)
+{
+    xor_dll_node_t *cur, *nxt, *tmp, *prev;
+
+    if (!head)
+        return;
+
+    // Get tail
+    prev = NULL;
+    cur=head;
+    while (XOR(cur->next, prev))
+    {
+	//Implement prev= cur, cur = cur->nxt;
+        tmp = prev;
+	prev = cur;
+        cur = XOR(cur->next, tmp);
+    }
+
+    printf("List elements in reverse order: ");
+    nxt = NULL;
+    while (cur)
+    {
+	printf("%d ", cur->val);
+	//Implement nxt=cur, cur=cur->prev;
+	tmp =nxt;
+	nxt=cur;
+	cur=XOR(cur->next, tmp);
+    }
+    printf("\n");
+}
 xor_dll_node_t *xor_dll_reverse_iter(xor_dll_node_t *head)
 {
 /*
