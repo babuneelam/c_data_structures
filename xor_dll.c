@@ -13,6 +13,7 @@ typedef struct xor_dll_node {
 } xor_dll_node_t;
 
 xor_dll_node_t *xor_dll_head=NULL;
+int is_sll;
 
 xor_dll_node_t *xor_dll_prepend(xor_dll_node_t *, int);
 xor_dll_node_t *xor_dll_append(xor_dll_node_t *, int);
@@ -23,6 +24,10 @@ xor_dll_node_t *xor_dll_reverse_recur(xor_dll_node_t *);
 void xor_dll_display(xor_dll_node_t *);
 void xor_dll_display_reverse(xor_dll_node_t *);
 void xor_dll_free(xor_dll_node_t *);
+
+xor_dll_node_t *xor_dll_to_sll(xor_dll_node_t *);
+xor_dll_node_t *sll_to_xor_dll(xor_dll_node_t *);
+void sll_display(xor_dll_node_t *);
 
 char help_str[] = "Allowed Operations: \n"
     "	-1 - Exit\r\n"
@@ -35,6 +40,8 @@ char help_str[] = "Allowed Operations: \n"
     "	 7 - display list in reverse\r\n"
     "	 8 - reverse list iteratively\r\n"
     "	 9 - reverse list recursively\r\n"
+    "	10 - convert to sll\r\n"
+    "	11 - convert to xor dll\r\n"
     ;
 
 int main()
@@ -52,18 +59,38 @@ int main()
     		printf("%s",help_str);
                 break;
             case 2: /*Prepend*/
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 scanf("%d", &val);
                 xor_dll_head = xor_dll_prepend(xor_dll_head, val);
                 break;
             case 3: /*Append*/
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 scanf("%d", &val);
                 xor_dll_head = xor_dll_append(xor_dll_head, val);
                 break;
             case 4: /*delete */
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 scanf("%d", &val);
                 xor_dll_head = xor_dll_delete(xor_dll_head, val);
                 break;
             case 5: /* search */
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 scanf("%d", &val);
                 n = xor_dll_search(xor_dll_head, val);
                 if (n)
@@ -72,16 +99,56 @@ int main()
                     printf("val %d not found in linked list\r\n", val);
                 break;
             case 6: /* display entire linked list */
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 xor_dll_display(xor_dll_head);
                 break;
             case 7: /* display entire linked list in reverse */
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 xor_dll_display_reverse(xor_dll_head);
                 break;
             case 8: /* reverse a list itereatively */
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 xor_dll_head = xor_dll_reverse_iter(xor_dll_head);
                 break;
             case 9: /* reverse a list recursively*/
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
                 xor_dll_head = xor_dll_reverse_recur(xor_dll_head);
+                break;
+            case 10: /* convert to sll*/
+		if (is_sll)
+		{
+		    printf("Convert the list to xor DLL before attempting this op\r\n");
+		    break;
+		}
+                xor_dll_head = xor_dll_to_sll(xor_dll_head);
+		is_sll=1;
+                sll_display(xor_dll_head);
+                break;
+            case 11: /* convert to xor dll*/
+		if (!is_sll)
+		{
+		    printf("Convert the list to SLL before attempting this op\r\n");
+		    break;
+		}
+                xor_dll_head = sll_to_xor_dll(xor_dll_head);
+		is_sll=0;
+                xor_dll_display(xor_dll_head);
                 break;
             default: /*error */
                 printf("Invalid operation\r\n");
@@ -117,7 +184,7 @@ xor_dll_node_t *xor_dll_prepend(xor_dll_node_t *head, int val)
 
 xor_dll_node_t *xor_dll_append(xor_dll_node_t *head, int val)
 {
-    xor_dll_node_t *n, *cur, *prev, *tmp;
+    xor_dll_node_t *n, *cur, *prev, *nxt;
 
     n = (xor_dll_node_t *)malloc(sizeof(struct xor_dll_node));
     if (!n)
@@ -137,10 +204,9 @@ xor_dll_node_t *xor_dll_append(xor_dll_node_t *head, int val)
     cur=head;
     while (XOR(cur->next, prev))
     {
-	//Implement prev= cur, cur = cur->nxt;
-        tmp = prev;
+        nxt = XOR(cur->next, prev); //nxt = cur->next;
 	prev = cur;
-        cur = XOR(cur->next, tmp);
+        cur = nxt;
     }
     cur->next = XOR(n, prev);
     n->next = XOR(cur, NULL);;
@@ -150,7 +216,7 @@ xor_dll_node_t *xor_dll_append(xor_dll_node_t *head, int val)
 
 xor_dll_node_t *xor_dll_delete(xor_dll_node_t *head, int val)
 {
-    xor_dll_node_t *cur, *prev, *nxt, *tmp;
+    xor_dll_node_t *cur, *prev, *nxt;
 
     if (!head)
 	return NULL;
@@ -171,10 +237,9 @@ xor_dll_node_t *xor_dll_delete(xor_dll_node_t *head, int val)
 	    free(cur);
 	    return head;
 	}
-	//Implement prev= cur, cur = cur->nxt;
-	tmp =prev;
-	prev=cur;
-	cur=XOR(cur->next, tmp);
+        nxt = XOR(cur->next, prev); //nxt = cur->next;
+	prev = cur;
+        cur = nxt;
     }
     printf("Not found\r\n");
     return head;
@@ -182,7 +247,7 @@ xor_dll_node_t *xor_dll_delete(xor_dll_node_t *head, int val)
 
 xor_dll_node_t *xor_dll_search(xor_dll_node_t *head, int val)
 {
-    xor_dll_node_t *cur, *prev, *tmp;
+    xor_dll_node_t *cur, *prev, *nxt;
 
     if (!head)
         return NULL;
@@ -193,17 +258,16 @@ xor_dll_node_t *xor_dll_search(xor_dll_node_t *head, int val)
     {
 	if (cur->val == val)
 	    return cur;
-	//Implement prev= cur, cur = cur->nxt;
-	tmp =prev;
-	prev=cur;
-	cur=XOR(cur->next, tmp);
+        nxt = XOR(cur->next, prev); //nxt = cur->next;
+	prev = cur;
+        cur = nxt;
     }
     return NULL;
 }
 
 void xor_dll_display(xor_dll_node_t *head)
 {
-    xor_dll_node_t *cur, *prev, *tmp;
+    xor_dll_node_t *cur, *prev, *nxt;
 
     if (!head)
         return;
@@ -214,17 +278,16 @@ void xor_dll_display(xor_dll_node_t *head)
     while (cur)
     {
 	printf("%d ", cur->val);
-	//Implement prev= cur, cur = cur->nxt;
-	tmp =prev;
-	prev=cur;
-	cur=XOR(cur->next, tmp);
+        nxt = XOR(cur->next, prev); //nxt = cur->next;
+	prev = cur;
+        cur = nxt;
     }
     printf("\n");
 }
 
 void xor_dll_display_reverse(xor_dll_node_t *head)
 {
-    xor_dll_node_t *cur, *nxt, *tmp, *prev;
+    xor_dll_node_t *cur, *nxt, *prev;
 
     if (!head)
         return;
@@ -232,12 +295,12 @@ void xor_dll_display_reverse(xor_dll_node_t *head)
     // Get tail
     prev = NULL;
     cur=head;
-    while (XOR(cur->next, prev))
+    while (XOR(cur->next, prev)) // while (cur->next)
     {
 	//Implement prev= cur, cur = cur->nxt;
-        tmp = prev;
+	nxt = XOR(cur->next, prev);
 	prev = cur;
-        cur = XOR(cur->next, tmp);
+        cur = nxt;
     }
 
     printf("List elements in reverse order: ");
@@ -245,13 +308,68 @@ void xor_dll_display_reverse(xor_dll_node_t *head)
     while (cur)
     {
 	printf("%d ", cur->val);
-	//Implement nxt=cur, cur=cur->prev;
-	tmp =nxt;
+        prev = XOR(cur->next, nxt); //prev = cur->prev
 	nxt=cur;
-	cur=XOR(cur->next, tmp);
+	cur=prev;
     }
     printf("\n");
 }
+
+
+xor_dll_node_t *xor_dll_to_sll(xor_dll_node_t *head)
+{
+    xor_dll_node_t *cur, *prev, *nxt;
+
+    prev = NULL;
+    cur=head;
+    while (cur)
+    {
+        nxt = XOR(cur->next, prev); // nxt = cur->next;
+	// conversion to sll
+        cur->next = nxt;
+	prev=cur;
+	cur=nxt;
+    }
+    return head;
+}
+
+xor_dll_node_t *sll_to_xor_dll(xor_dll_node_t *head)
+{
+    xor_dll_node_t *cur, *prev, *nxt;
+
+    if (!head)
+        return NULL;
+
+    prev = NULL;
+    cur=head;
+    while (cur)
+    {
+        nxt = cur->next;
+	// xor dll conversion
+	cur->next = XOR(nxt, prev);
+	prev=cur;
+	cur=nxt;
+    }
+    return head;
+}
+
+void sll_display(xor_dll_node_t *head)
+{
+    xor_dll_node_t *n;
+
+    if (!head)
+        return;
+
+    printf("SLL elements: ");
+    n=head;
+    while (n)
+    {
+        printf("%d ", n->val);
+        n=n->next;
+    }
+    printf("\n");
+}
+
 xor_dll_node_t *xor_dll_reverse_iter(xor_dll_node_t *head)
 {
 /*
@@ -292,19 +410,16 @@ xor_dll_node_t *xor_dll_reverse_recur(xor_dll_node_t *head)
 
 void xor_dll_free(xor_dll_node_t *head)
 {
-    xor_dll_node_t *cur,*nxt, *prev, *tmp;
+    xor_dll_node_t *cur,*nxt, *prev;
 
     prev = NULL;
     cur=head;
     while (cur)
     {
-	//Implement nxt=cur->next;
-	tmp =prev;
-	prev=cur;
-	nxt =XOR(cur->next, tmp);
-
+        nxt = XOR(cur->next, prev); //nxt = cur->next;
+	prev = cur;
 	free(cur);
-	cur=nxt;
+        cur = nxt;
     }
 }
 
