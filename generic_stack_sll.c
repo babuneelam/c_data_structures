@@ -16,8 +16,10 @@ typedef struct STK {
     int cur_sz; // can be avoided, just for stats
 
     // Generic Functions
-    void (*disp)(void *);
-    void (*free)(void *);
+    void (*disp)(void *); // Not mandatory as stak display is not a standard
+			  // func provided by stack module
+    void (*free)(void *); // Not mandatory as stack free is not the primary 
+			  // func provided by stack module
 } STK_t;
 
 STK_t *STK;
@@ -309,3 +311,18 @@ void free_fn(void *n)
 	    break;
     }
 }
+
+
+// IN my implementation above, I expect the display & free functions to be 
+// provided. However, this leads to performance decrease due to difference in 
+// memory localities.
+
+// Alternate implementation here:
+// https://see.stanford.edu/Course/CS107/224
+// In the implementation described in the link, the entire user memory is just 
+// stored in a stack element as bytes (which are pre-allocated inside stacks 
+//element array & returned in stack pop as bytes. It is 
+// the responsibility of the caller to interpret it after that. It duplicates 
+// memory & expect caller to malloc memory for every push & then free it.
+// Depending on design goals, one implementation or other can be chosen
+
