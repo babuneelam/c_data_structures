@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define MAX_SIZE 255
+#define MAX_SIZE 26 
 #define NO_MORE -1
 #define MAX_STR_LEN 50
 
@@ -119,9 +119,10 @@ int main()
 
 trie_node_t *trie_insert(trie_node_t *root, char *key)
 {
-    int i;
+    int i, ind;
     trie_node_t *cur;
 
+// TBD: string validation to ensure all characters are only lower-case alphabets
     if(!root)
     {
         root = (trie_node_t *)calloc(1, sizeof(struct trie_node));
@@ -135,16 +136,17 @@ trie_node_t *trie_insert(trie_node_t *root, char *key)
     cur = root;
     for (i=0; i<strlen(key); i++)
     {
-        if (!cur->children[key[i]])
+	ind = key[i] - 'a';
+        if (!cur->children[ind])
         {
-            cur->children[key[i]] = (trie_node_t *)calloc(1, sizeof(struct trie_node));
-            if (!cur->children[key[i]])
+            cur->children[ind] = (trie_node_t *)calloc(1, sizeof(struct trie_node));
+            if (!cur->children[ind])
 	    {
                 printf("Memory Allocation failure \r\n");
                 return root;
             }
 	}
-        cur = cur->children[key[i]];
+        cur = cur->children[ind];
     }
     cur->isLeaf = 1;
     strcpy(cur->key, key);
@@ -154,7 +156,7 @@ trie_node_t *trie_insert(trie_node_t *root, char *key)
 
 trie_node_t *trie_delete(trie_node_t *root, char *key)
 {
-    int i;
+    int i, ind;
     trie_node_t *cur;
 
     if (!root)
@@ -166,12 +168,13 @@ trie_node_t *trie_delete(trie_node_t *root, char *key)
     cur = root;
     for (i=0; i<strlen(key); i++)
     {
-        if (!cur->children[key[i]])
+	ind = key[i] - 'a';
+        if (!cur->children[ind])
         {
 	    printf("Key %s not found in the tree \r\n", key);
 	    return root;
 	}
-        cur = cur->children[key[i]];
+        cur = cur->children[ind];
     }
     if (cur->isLeaf)
 	cur->isLeaf = 0; // Not freeing unused nodes !!
@@ -186,7 +189,7 @@ trie_node_t *trie_delete(trie_node_t *root, char *key)
 bool trie_search(trie_node_t *root, char *key)
 {
     trie_node_t *cur;
-    int i;
+    int i, ind;
 
     if (!root)
 	return 0;
@@ -194,9 +197,10 @@ bool trie_search(trie_node_t *root, char *key)
     cur = root;
     for (i=0; i<strlen(key); i++)
     {
-        if (!cur->children[key[i]])
+	ind = key[i] - 'a';
+        if (!cur->children[ind])
 	    return 0;
-        cur = cur->children[key[i]];
+        cur = cur->children[ind];
     }
     if (cur->isLeaf)
 	return 1;
