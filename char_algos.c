@@ -103,7 +103,9 @@ int main()
             case 7: /* atoi */
 // why not scanf %s? because fgets offers protection against buffer overflows
 // http://stackoverflow.com/questions/26955466/difference-between-gets-vs-scanf-vs-fgets-in-c-programming
-// The C library function char *fgets(char *str, int n, FILE *stream) reads a line from the specified stream and stores it into the string pointed to by str. It stops when either (n-1) characters are read, the newline character is read, or the end-of-file is reached, whichever comes first.
+// The C library function char *fgets(char *str, int n, FILE *stream) reads a line from the specified stream and stores it into the
+// string pointed to by str. It stops when either (n-1) characters are read, the newline character is read, or the end-of-file is 
+// reached, whichever comes first.
 // If a newline is read, it is stoed into the buffer. A terminating null byte \0 is stored after the last character in the buffer
 		getchar();
                 memset(src,'\n',MAX_STR_LEN);
