@@ -173,7 +173,7 @@ bst_node_t *bst_delete(bst_node_t *root, int val)
     if (root->left && root->right)
     {
         root->val = find_min(root)->val;
-	root->right - bst_delete(root->right, root->val);
+	root->right = bst_delete(root->right, root->val);
     }
     if (!root->right)
     	return root->left;
